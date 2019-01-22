@@ -3,3 +3,5 @@ Important commands:
 Package Manager Console:
 Enable-Migrations
 Update-Database
+
+Add-Migration UserAdded
