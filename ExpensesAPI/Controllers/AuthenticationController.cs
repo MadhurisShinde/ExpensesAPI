@@ -1,4 +1,5 @@
-﻿using ExpensesAPI.Models;
+﻿using ExpensesAPI.Data;
+using ExpensesAPI.Models;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -28,7 +29,24 @@ namespace ExpensesAPI.Controllers
         [HttpPost]
         public IHttpActionResult Register([FromBody] User user)
         {
-            return null;
+            try
+            {
+                using (var context = new AppDbContext())
+                {
+                    var exists = context.Users.Any(n => n.UserName == user.UserName);
+                    if (exists) return BadRequest("User already exists");
+
+                    context.Users.Add(user);
+                    context.SaveChanges();
+
+                    return Ok(CreateToken(user));
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
         }
 
         private JwtPackage CreateToken(User user)
